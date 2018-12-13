@@ -1,6 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-const cTable = require('console.table');
+require('console.table');
 
 
 var connection = mysql.createConnection({
@@ -42,12 +42,17 @@ function takeOrder() {
         }
     ]).then((res) => {
         console.log(res);
-    }
-    )
+        if (user.quantity < item.quantity) {
+            console.log("Your order has been fulfilled!");
+        } else if (user.quantity > item.quantiy) {
+            console.log("Sorry! We only have " + item.quantity + "left.");
+        }
+    })
 };
+
 
 // Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
 // If not, the app should log a phrase like Insufficient quantity!, and then prevent the order from going through.
 // However, if your store does have enough of the product, you should fulfill the customer's order.
 // This means updating the SQL database to reflect the remaining quantity.
-// Once the update goes through, show the customer the total cost of their purchase.
+// Once the update goes through, show the customer the total cost of their purchase
