@@ -44,7 +44,7 @@ function takeOrder() {
             if (err) throw err;
             // console.log(data[0])
             if (data[0].quantity > answer.quantity) {
-                var total = (answer.quantity * itemID.price);
+                var total = (answer.quantity * data[0].price);
                 console.log(`Your transaction is complete! Your total is ${total}`);
                 var updateQ = (data[0].quantity - answer.quantity);
                 // console.log(updateQ);
