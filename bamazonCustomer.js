@@ -42,13 +42,17 @@ function takeOrder() {
     ]).then((answer) => {
         connection.query("SELECT quantity FROM products WHERE itemID = ?", [answer.itemID], (err, data) => {
             if (err) throw err;
+            console.log(data[0])
             if (data[0].quantity > answer.quantity) {
-                var total = (answer.quantity * data[0].price);
+                var total = (answer.quantity * data[0].itemID.price);
                 console.log(`Your transaction is complete! Your total is ${total}`);
                 var updateQ = (data[0].quantity - answer.quantity);
-                console.log(updateQ);
+                // console.log(updateQ);
                 connection.query(`UPDATE products SET quantity = ? WHERE itemID = ?;`, [updateQ, answer.itemID], (err, data) => {
                     if (err) throw err;
+                    else {
+                        takeOrder();
+                    }
                 });
 
             } else if (data[0].quantity < answer.quantity) {
@@ -57,7 +61,6 @@ function takeOrder() {
             }
 
         })
-        connection.end();
 
     })
 }
