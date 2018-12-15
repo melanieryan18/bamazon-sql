@@ -21,9 +21,9 @@ connection.connect(function (err) {
 
 // first display all of the items available for sale. Include the ids, names, and prices of products for sale.
 function displayInventory() {
-    connection.query("SELECT itemID, product_name, dept_name, price, quantity FROM ??", ["products"], (err, res) => {
+    connection.query("SELECT itemID, product_name, dept_name, price, quantity FROM ??", ["products"], (err, data) => {
         if (err) throw err;
-        console.table(res);
+        console.table(data);
         takeOrder();
     });
 }
@@ -31,28 +31,38 @@ function displayInventory() {
 function takeOrder() {
     inquirer.prompt([
         {// The first should ask them the ID of the product they would like to buy.
-            name: "item",
+            name: "itemID",
             message: "What is the item ID of your desired purchase?",
             type: "input",
         }, {// The second message should ask how many units of the product they would like to buy.
             name: "quantity",
             message: "How many would you like to purchase?",
+            type: "input"
         }
-    ]).then((res) => {
-        console.log(res);
-        // Retrieve quantity from products in sql & compare to customer request
-        // If in stock, fulfill customer order / update SQL database to reflect the remaining quantity
-        connection.query("SELECT quantity FROM products WHERE product_name = ?", [res.item], (res, data) => {
-            if (data.quantity > res.quantity) {
-                console.log("Your order has been fulfilled!");
-            } // If insufficient quantity!, prevent order
-            else if (data.quantity < res.quantity) {
+    ]).then((answer) => {
+        connection.query("SELECT quantity FROM products WHERE itemID = ?", [answer.itemID], (err, data) => {
+            if (err) throw err;
+            console.log(answer.itemID)
+            console.log(answer.quantity)
+            if (data.quantity > answer.quantity) {
+                purchase();
+            } else if (data.quantity < answer.quantity) {
                 console.log("Sorry! We only have " + data.quantity + "left.");
             }
-            // Once the update goes through, show the customer the total cost of their purchase
-            // connection.end();
+
         })
     })
-};
-
-
+}
+        // function purchase() {
+        //     var total = data.price * answer.item.quantity;
+        //     console.log("Your purchase is complete! Your total balance is " + total);
+        //     connection.query("UPDATE products WHERE item ID = ? quantity ?",
+        //     if (err) throw err;
+        //     [
+        //         {
+        //             quantity: answer.quantity
+        //         },
+        //         {
+        //             id: answer.itemID
+        //         }
+        //     ],
