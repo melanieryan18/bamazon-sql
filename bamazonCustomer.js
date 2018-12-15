@@ -42,29 +42,22 @@ function takeOrder() {
     ]).then((answer) => {
         connection.query("SELECT quantity FROM products WHERE itemID = ?", [answer.itemID], (err, data) => {
             if (err) throw err;
-            // console.log(data)
-            // console.log(answer.itemID)
-            // console.log(answer.quantity)
             if (data[0].quantity > answer.quantity) {
                 var total = (answer.quantity * data[0].price);
-                console.log("Your transaction is complete! Your total is " + total);
-            } else if (data.quantity < answer.quantity) {
-                console.log("Sorry! We only have " + data[0].quantity + "left.");
+                console.log(`Your transaction is complete! Your total is ${total}`);
+                var updateQ = (data[0].quantity - answer.quantity);
+                console.log(updateQ);
+                connection.query(`UPDATE products SET quantity = ? WHERE itemID = ?;`, [updateQ, answer.itemID], (err, data) => {
+                    if (err) throw err;
+                });
+
+            } else if (data[0].quantity < answer.quantity) {
+                console.log(`Sorry! We only have ${data[0].quantity} in stock.`)
+                takeOrder();
             }
 
         })
+        connection.end();
+
     })
 }
-        // function purchase() {
-        //     var total = data.price * answer.item.quantity;
-        //     console.log("Your purchase is complete! Your total balance is " + total);
-        //     connection.query("UPDATE products WHERE item ID = ? quantity ?",
-        //     if (err) throw err;
-        //     [
-        //         {
-        //             quantity: answer.quantity
-        //         },
-        //         {
-        //             id: answer.itemID
-        //         }
-        //     ],
