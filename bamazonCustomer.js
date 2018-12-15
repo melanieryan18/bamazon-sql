@@ -42,12 +42,14 @@ function takeOrder() {
     ]).then((answer) => {
         connection.query("SELECT quantity FROM products WHERE itemID = ?", [answer.itemID], (err, data) => {
             if (err) throw err;
-            console.log(answer.itemID)
-            console.log(answer.quantity)
-            if (data.quantity > answer.quantity) {
-                purchase();
+            // console.log(data)
+            // console.log(answer.itemID)
+            // console.log(answer.quantity)
+            if (data[0].quantity > answer.quantity) {
+                var total = (answer.quantity * data[0].price);
+                console.log("Your transaction is complete! Your total is " + total);
             } else if (data.quantity < answer.quantity) {
-                console.log("Sorry! We only have " + data.quantity + "left.");
+                console.log("Sorry! We only have " + data[0].quantity + "left.");
             }
 
         })
